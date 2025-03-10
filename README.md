@@ -24,6 +24,7 @@
         ```
     - Hàm, biến và các kiểu dữ liệu trong Go sẽ có thể sử dụng trong các package khác nếu (exported) nếu viết hoa chữ cái đầu.
     - Các biến và hàm không được export sẽ chỉ có thể sử dụng bên trong package của nó.
+    - Package `main` được sử dụng để chứa hàm `main()` dùng để thực thi chương trình.
 
 2. Go modules
     - Go Modules là hệ thống quản lý các dependencies của go.
@@ -63,4 +64,31 @@
         go mod init module_name
         ```
     - Khi câu lệch chạy thành công, file `go.mod` sẽ tự động được tạo tại gốc của thư mục và sẽ quản lý toàn bộ dependencies của module, bao gồm cả các thư mục con.
-    - 
+    - Sử dụng câu lệnh `go get package_name` để thêm dependency.
+    - Sử dụng câu lệnh `go mod tidy` để thêm các dependency còn thiếu trong modules và xóa các dependency không dùng đến.
+3. Functions
+   - Functions trong Go có thể có nhiều tham số và trả về nhiều dữ liệu:
+      ```
+     func swap(x, y string) (string, string) {
+         return y, x
+     }
+     ```
+   - Dữ liệu trả về có thể được đặt tên, câu lệnh `return` sẽ trả về giá trị của các biến này
+      ```
+     func split(sum int) (x, y int) {
+         x = sum * 4 / 9
+         y = sum - x
+         return
+     }
+     ```   
+   - Variadic Function: Là hàm có thể truyền vào tùy ý số lượng các tham số sử dụng syntax ..., tham số sử dụng ... phải là tham số cuối.
+      ```
+     func sum(elems ...int) int {
+         sum := 0
+         for _, v := range elems {
+            sum += v
+         }
+         return sum
+     }
+     ```
+   
