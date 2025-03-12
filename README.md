@@ -419,6 +419,11 @@
 	            time.Sleep(1 * time.Second)
             }
             ```
+            ```
+            Hello
+            World
+            ```
+            
         - Hàm `main()` trong Go sẽ được chạy trong `main goroutine`, khi `main goroutine` chạy xong, chương trình sẽ kết thúc, các `goroutine` khác dù chưa chạy xong sẽ đều phải dừng lại.
     - Channel
         - Channel là các kênh giao tiếp trung gian giữa các Goroutines trong Golang.
@@ -445,6 +450,9 @@
 	            time.Sleep(1 * time.Second)
             }
             ```
+            ```
+            10
+            ```
         - Để đóng một Channel chúng ta sẽ dùng hàm close(). Khi một Channel bị close thì có nghĩa là không còn dữ liệu nào sẽ đi qua nó nữa. Nếu ta gửi dữ liệu vào 1 channel đã được đóng thì sẽ dẫn đến panic.
             ```go
             func sendValue(c chan<- int, value int) {
@@ -470,6 +478,10 @@
 	            time.Sleep(1 * time.Second)
             }
             ```
+            ```
+            Received value: 10
+            Channel is closed
+            ```
         - Ta có thể sử dụng `for range` để nhận tất cả dữ liệu từ một channel cho đến khi channel đó đóng.
             ```go
             func sendValue(c chan<- int, value ...int) {
@@ -492,6 +504,11 @@
 	            time.Sleep(1 * time.Second)
             }
             ```
+            ```
+            3
+            5
+            7
+            ```
         - Câu lệnh `Select` giúp một goroutine có thể làm việc, đợi và phản ứng với nhiều channel.
             ```go
             func sendValue(c chan<- int, value int) {
@@ -513,6 +530,10 @@
 		            fmt.Printf("Then received from c1: %v\n", <-c1)
 	            }
             }
+            ```
+            ```
+            First received from c2: 2
+            Then received from c1: 3
             ```
     - Buffered channel
         - Buffered Channel là một channel trong Golang có khả năng lưu trữ được dữ liệu bên trong nó.
@@ -542,6 +563,11 @@
 	            time.Sleep(1 * time.Second)
             }
             ```
+            ```
+            3
+            5
+            7
+            ```
     - Mutex
         - Mutex là một cơ chế đồng bộ hóa được sử dụng để đảm bảo rằng chỉ có một goroutine có thể truy cập vào một tài nguyên chia sẻ tại một thời điểm.
         - Go cung cấp hai loại mutex
@@ -565,7 +591,15 @@
 	            go add(-20)
 	            go add(30)
 	            time.Sleep(1 * time.Second)
+                fmt.Printf("Final total value: %d\n", total.value)
             }
+            ```
+            ```
+            Initial total value: 0
+            add: 30, total value: 30 
+            add: 10, total value: 40 
+            add: -20, total value: 20 
+            Final total value: 20
             ```
             - RWMutex (Read-Write Mutex): Phân biệt giữa các thao tác đọc và ghi. Nhiều goroutine có thể đồng thời đọc dữ liệu, nhưng chỉ một goroutine có thể ghi dữ liệu tại một thời điểm.
     - WaitGroup
@@ -606,6 +640,21 @@
 	            fmt.Println("All goroutines completed")
             }
             ```
+            ```
+            Waiting for all goroutines to complete...
+            Goroutine 3 is running...
+            Goroutine 1 is running...
+            Goroutine 2 is running...
+            Goroutine 1 completed
+            Goroutine 2 completed!
+            Goroutine 3 completed!
+            All goroutines completed
+
+    14. Common package
+        - `fmt`: Package cung cấp các hàm định dạng và in dữ liệu.
+        - `time`: Package time cung cấp các hàm và kiểu dữ liệu để làm việc với thời gian và ngày tháng.
+        - `net/htttp`: Package cung cấp các hàm để xây dựng các ứng dụng web và HTTP client.
+
 
 
 
