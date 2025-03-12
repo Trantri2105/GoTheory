@@ -382,11 +382,240 @@
         func DoSomething() {}
         ```
         - Tên nên ngắn gọn nhưng có ý nghĩa, đủ để mô tả chức năng hoặc dữ liệu mà chúng nắm giữ.
-      - Interface
+    - Interface
         - Sử dụng PascalCase với hậu tố "-er" cho interface mô tả hành vi: Reader, Writer, Formatter
 
 13. Multithreading
-    - Xử lý đồng thời (concurrency)
+    - Xử lý đồng thời (concurrency):
+        - Xử lý đồng thời là khả năng phân chia và điều phối nhiều tác vụ khác nhau trong cùng một khoảng thời gian và tại một thời điểm chỉ có thể xử lý một tác vụ.
+        - Tất cả các chương trình đang chạy trong máy tính chúng ta chạy đều do hệ điều hành quản lý, với mỗi chương trình đang chạy như vậy được gọi là một process (tiến trình) và được cấp một process id (PID) để hệ điều hành dễ dàng quản lí.
+        - Các tác vụ của tiến trình sẽ được CPU core (nhân CPU) của máy tính xử lý và tại một thời điểm một nhân CPU chỉ có thể xử lý một tác vụ.
+        - Nhân CPU sẽ không đợi xử lý xong một tác vụ rồi mới xử lý tiếp tác vụ khác, mà nhân CPU sẽ chia các tác vụ lớn thành các tác vụ nhỏ hơn và sắp xếp xen kẽ lẫn nhau. 
+        - Nhân CPU xẽ tận dụng thời gian rảnh của tác vụ này để đi làm tác vụ khác, một lúc thì làm tác vụ nhỏ này, một lúc khác thì làm tác vụ nhỏ khác.
+        - Như vậy chúng ta sẽ cảm thấy máy tính xử lý nhiều việc cùng lúc tại cùng thời điểm. Nhưng bản chất bên dưới nhân CPU thì nó chỉ có thể thực thi một tác vụ nhỏ trong tác vụ lớn tại thời điểm đó.
+    - Xử lý song song (parallelism):
+        - Xử lý song song là khả năng xử lý nhiều tác vụ khác nhau trong cùng một thời điểm, các tác vụ này hoàn toàn độc lập với nhau. 
+        - Xử lý song song chỉ có thể thực hiện trên máy tính có số nhân lớn hơn 1.
+        - Thay vì một nhân CPU chúng ta chỉ có thể xử lý một tác vụ nhỏ tại một thời điểm thì khi số nhân CPU có nhiều hơn chúng ta có thể xử lý các tác vụ song song với nhau cùng lúc trên các nhân CPU.
+        - Trên mỗi nhân của CPU vẫn xảy ra quá trình xử lý đồng thời miễn là tại một thời điểm không có xảy ra việc xử lý cùng một tác vụ trên hai nhân CPU khác nhau.
+    - Thread:
+        - Thread là một luồng trong một tiến trình đang chạy.
+        - Các thread trong process sẽ được cấp phát riêng một vùng nhớ stack để lưu các biến riêng của thread đó. 
+        - Ngoài ra các thread chia sẻ chung vùng nhớ heap của process.
+        - Số lượng thread chạy song song trong cùng một thời điểm sẽ bằng với số lượng nhân CPU mà máy tính chúng ta có. Vì vậy khi chúng ta lập trình mà tạo quá nhiều thread thì cũng không có giúp cho chương trình chúng ta chạy nhanh hơn, mà còn gây ra lỗi và làm chậm chương trình.
+    - Goroutine
+        - Goroutines là một đơn vị concurrency của ngôn ngữ Go, Go sử dụng goroutine để xử lý đồng thời nhiều tác vụ.
+        - Việc khởi tạo goroutines sẽ ít tốn chi phí hơn khởi tạo thread so với các ngôn ngữ khác.
+        - Goroutine và thread không giống nhau.
+        - Đầu tiên, system thread sẽ có một kích thước vùng nhớ stack cố định (thông thường vào khoảng 2MB). Vùng nhớ stack chủ yếu được dùng để lưu trữ những tham số, biến cục bộ và địa chỉ trả về khi chúng ta gọi hàm.
+        - Kích thước cố định của stack sẽ dẫn đến hai vấn đề:
+            - Stack overflow với những chương trình gọi hàm đệ quy sâu.
+            - Lãng phí vùng nhớ đối với chương trình đơn giản.
+        - Goroutine giải quyết vấn đề này bằng cách cấp phát linh hoạt vùng nhớ stack:
+            - Một Goroutines sẽ được bắt đầu bằng một vùng nhớ nhỏ (khoảng 2KB hoặc 4KB).
+            - Khi không gian stack hiện tại là không đủ Goroutines sẽ tự động tăng không gian stack (kích thước tối đa của stack có thể được đạt tới 1GB).
+            - Bởi vì chi phí của việc khởi tạo là nhỏ, chúng ta có thể dễ dàng giải phóng hàng ngàn goroutines.
+        - Trong các ngôn ngữ lập trình khác thì các thread được quản lý bởi hệ điều hành.
+        - Trong Golang sử dụng Go runtime có riêng cơ chế định thời cho Goroutines, nó dùng một số kỹ thuật để ghép M Goroutines trên N thread của hệ điều hành.
+        - Cơ chế định thời Goroutines tương tự với cơ chế định thời của hệ điều hành nhưng chỉ ở mức chương trình.
+        - Bắt đầu một goroutine mới bằng cách thêm từ khóa `go` vào trước một hàm.
+            ```go
+            func main() {
+	            go fmt.Println("World")
+	            fmt.Println("Hello")
+	            time.Sleep(1 * time.Second)
+            }
+            ```
+        - Hàm `main()` trong Go sẽ được chạy trong `main goroutine`, khi `main goroutine` chạy xong, chương trình sẽ kết thúc, các `goroutine` khác dù chưa chạy xong sẽ đều phải dừng lại.
+    - Channel
+        - Channel là các kênh giao tiếp trung gian giữa các Goroutines trong Golang.
+        - Channel giúp các goroutines có thể gởi và nhận được dữ liệu cho nhau một cách an toàn thông qua cơ chế lock-free.
+        - Channel là kênh giao tiếp 2 chiều. Nghĩa là Channel có thể dùng cho cả gởi và nhận dữ liệu.
+        - Các hoạt động gửi và nhận dữ liệu trên channel sẽ bị chặn (block) cho đến khi cả hai bên đều sẵn sàng:
+            - Khi một goroutine gửi dữ liệu vào một channel (ch <- value), nó sẽ chờ (bị block) cho đến khi có một goroutine khác sẵn sàng nhận dữ liệu từ channel đó.
+            - Tương tự, khi một goroutine muốn nhận dữ liệu từ một channel (value := <-ch), nó sẽ chờ cho đến khi có dữ liệu được gửi vào channel.
+            - Nhờ cơ chế này, các goroutine có thể tự đồng bộ hóa với nhau một cách tự nhiên thông qua việc trao đổi dữ liệu, mà không cần sử dụng các cơ chế đồng bộ hóa phức tạp khác.
+            ```go
+            func sendValue(c chan<- int, value int) {
+	            //Send value to channel
+	            c <- value
+            }
+            func receiveValue(c <-chan int) {
+	            //Receive value from channel
+	            fmt.Println(<-c)
+            }
+            func main() {
+	            //Initialize a channel
+	            c := make(chan int)
+	            go sendValue(c, 10)
+	            go receiveValue(c)
+	            time.Sleep(1 * time.Second)
+            }
+            ```
+        - Để đóng một Channel chúng ta sẽ dùng hàm close(). Khi một Channel bị close thì có nghĩa là không còn dữ liệu nào sẽ đi qua nó nữa. Nếu ta gửi dữ liệu vào 1 channel đã được đóng thì sẽ dẫn đến panic.
+            ```go
+            func sendValue(c chan<- int, value int) {
+	            //Send value to channel
+	            c <- value
+	            close(c)
+            }
+            func receiveValue(c <-chan int) {
+	            //Receive value and check if channel ís closed
+	            value, ok := <-c
+	            if ok {
+		            fmt.Println("Received value:", value)
+	            } else {
+		            fmt.Println("Channel is closed")
+	            }
+            }
+            func main() {
+	            //Initialize a channel
+	            c := make(chan int)
+	            go sendValue(c, 10)
+	            go receiveValue(c)
+	            go receiveValue(c)
+	            time.Sleep(1 * time.Second)
+            }
+            ```
+        - Ta có thể sử dụng `for range` để nhận tất cả dữ liệu từ một channel cho đến khi channel đó đóng.
+            ```go
+            func sendValue(c chan<- int, value ...int) {
+	            //Send value to channel
+	            for _, v := range value {
+		            c <- v
+	            }
+	            close(c)
+            }
+            func receiveValue(c <-chan int) {
+	            for v := range c {
+		            fmt.Println(v)
+	            }
+            }
+            func main() {
+	            //Initialize a channel
+	            c := make(chan int)
+	            go sendValue(c, 3, 5, 7)
+	            go receiveValue(c)
+	            time.Sleep(1 * time.Second)
+            }
+            ```
+        - Câu lệnh `Select` giúp một goroutine có thể làm việc, đợi và phản ứng với nhiều channel.
+            ```go
+            func sendValue(c chan<- int, value int) {
+	            c <- value
+	            close(c)
+            }
+            func main() {
+	            c1 := make(chan int)
+	            c2 := make(chan int)
+	            go sendValue(c1, 3)
+	            go sendValue(c2, 2)
+	            select {
+	            case v1 := <-c1:
+		            fmt.Printf("First received from c1: %v\n", v1)
+		            fmt.Printf("Then received from c2: %v\n", <-c2)
+
+	            case v2 := <-c2:
+		            fmt.Printf("First received from c2: %v\n", v2)
+		            fmt.Printf("Then received from c1: %v\n", <-c1)
+	            }
+            }
+            ```
+    - Buffered channel
+        - Buffered Channel là một channel trong Golang có khả năng lưu trữ được dữ liệu bên trong nó.
+        - Sử dụng hàm len() để xem số lượng giá trị hiện đang có trong channel.
+        - Sử dụng hàm cap() dể xem sức chứa tối đa của một channel.
+        - Buffered Channel sẽ không block goroutine nếu sức chứa vẫn còn, mà không cần phải có một goroutine khác lấy dữ liệu từ channel.
+        - Buffered Channel sẽ block goroutine hiện tại nếu vượt sức chứa.
+        - Lấy dữ liệu từ empty buffered channel sẽ block goroutine.
+            ```go
+            func sendValue(c chan<- int, value ...int) {
+	            //Send value to channel
+	            for _, v := range value {
+		            c <- v
+	            }
+	            close(c)
+            }
+            func receiveValue(c <-chan int) {
+	            for v := range c {
+		            fmt.Println(v)
+	            }
+            }
+            func main() {
+	            //Initialize a channel with capacity = 3
+	            c := make(chan int, 3)
+	            go sendValue(c, 3, 5, 7)
+	            go receiveValue(c)
+	            time.Sleep(1 * time.Second)
+            }
+            ```
+    - Mutex
+        - Mutex là một cơ chế đồng bộ hóa được sử dụng để đảm bảo rằng chỉ có một goroutine có thể truy cập vào một tài nguyên chia sẻ tại một thời điểm.
+        - Go cung cấp hai loại mutex
+            - Mutex: Khóa tiêu chuẩn, chỉ cho phép một goroutine truy cập vào tài nguyên chia sẻ tại một thời điểm.
+            ```go
+            var total struct {
+	            sync.Mutex
+	            value int
+            }
+
+            func add(value int) {
+	            total.Lock()
+	            total.value += value
+	            fmt.Printf("add: %d, total value: %d \n", value, total.value)
+	            total.Unlock()
+            }
+
+            func main() {
+	            fmt.Printf("Initial total value: %d\n", total.value)
+	            go add(10)
+	            go add(-20)
+	            go add(30)
+	            time.Sleep(1 * time.Second)
+            }
+            ```
+            - RWMutex (Read-Write Mutex): Phân biệt giữa các thao tác đọc và ghi. Nhiều goroutine có thể đồng thời đọc dữ liệu, nhưng chỉ một goroutine có thể ghi dữ liệu tại một thời điểm.
+    - WaitGroup
+        - WaitGroup là một cấu trúc đồng bộ hóa trong gói sync của Go, được sử dụng để đợi một nhóm goroutine hoàn thành công việc của chúng trước khi tiếp tục thực thi.
+        - WaitGroup hoạt động như một bộ đếm:
+            - Khi thêm goroutine vào nhóm đợi, ta tăng bộ đếm lên (sử dụng phương thức Add())
+            - Khi một goroutine hoàn thành công việc, nó giảm bộ đếm xuống (sử dụng phương thức Done())
+            - Goroutine chính có thể đợi cho đến khi bộ đếm về 0 (sử dụng phương thức Wait())
+            ```go
+            func main() {
+	            var wg sync.WaitGroup
+
+	            wg.Add(3)
+
+	            go func() {
+		            defer wg.Done()
+		            fmt.Println("Goroutine 1 is running...")
+		            time.Sleep(1 * time.Second)
+		            fmt.Println("Goroutine 1 completed")
+	            }()
+
+	            go func() {
+		            defer wg.Done()
+		            fmt.Println("Goroutine 2 is running...")
+		            time.Sleep(2 * time.Second)
+		            fmt.Println("Goroutine 2 completed!")
+	            }()
+
+	            go func() {
+		            defer wg.Done()
+		            fmt.Println("Goroutine 3 is running...")
+		            time.Sleep(3 * time.Second)
+		            fmt.Println("Goroutine 3 completed!")
+	            }()
+
+	            fmt.Println("Waiting for all goroutines to complete...")
+	            wg.Wait()
+	            fmt.Println("All goroutines completed")
+            }
+            ```
+
+
+
     
 
     
