@@ -650,10 +650,10 @@
             Goroutine 3 completed!
             All goroutines completed
 
-    14. Common package
-        - `fmt`: Package cung cấp các hàm định dạng và in dữ liệu.
-        - `time`: Package time cung cấp các hàm và kiểu dữ liệu để làm việc với thời gian và ngày tháng.
-        - `net/htttp`: Package cung cấp các hàm để xây dựng các ứng dụng web và HTTP client.
+14. Common package
+    - `fmt`: Package cung cấp các hàm định dạng và in dữ liệu.
+    - `time`: Package time cung cấp các hàm và kiểu dữ liệu để làm việc với thời gian và ngày tháng.
+    - `net/htttp`: Package cung cấp các hàm để xây dựng các ứng dụng web và HTTP client.
 
 
 
