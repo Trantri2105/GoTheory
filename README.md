@@ -2,18 +2,12 @@
 ## Lịch sử ra đời
 - Ngôn ngữ Go ban đầu được thiết kế và phát triển bởi một nhóm kĩ sư Google bao gồm Robert Griesemer, Ken Thompson và Rob Pike vào năm 2007. 
 - Sau đó Go lần đầu tiên được giới thiệu vào tháng 11 năm 2009 và phiên bản đầu tiên của nó được phát hành vào tháng 12 năm 2012.
-
-## Điểm mạnh và yếu của Go so với các ngôn ngữ khác
-- 
-
-## Go được dùng để lập trình các ứng dụng như thế nào
-
 ## Chi tiết về Go
 1. Package
     - Mọi chương trình trong Go đều được tạo nên bởi các package. Mỗi file đều thuộc một package.
     - Theo quy chuẩn, tên của package sẽ trùng với tên thư mục chứa package đó.
     - Để sử dụng các chức năng từ một package khác, chúng ta cần phải import path của package đó vào file của mình, cú pháp:
-        ```
+        ```go
         // Import 1 package
         import "package"
 
@@ -31,7 +25,7 @@
     - Go Modules là hệ thống quản lý các dependencies của go.
     - Module là tập hợp của các package trong go với file `go.mod` ở thư mục gốc.
     - File `go.mod` sẽ chứa path của module, các dependencies cần thiết để module đó chạy thành công.
-        ```
+        ```go
         module SchoolManagement
 
         go 1.22
@@ -61,7 +55,7 @@
         )
         ```
     - Khởi tạo một module trong go sử dụng câu lệnh
-        ```
+        ```go
         go mod init module_name
         ```
     - Khi câu lệch chạy thành công, file `go.mod` sẽ tự động được tạo tại gốc của thư mục và sẽ quản lý toàn bộ dependencies của module, bao gồm cả các thư mục con.
@@ -69,13 +63,13 @@
     - Sử dụng câu lệnh `go mod tidy` để thêm các dependency còn thiếu trong modules và xóa các dependency không dùng đến.
 3. Functions
     - Functions trong Go có thể có nhiều tham số và trả về nhiều dữ liệu:
-        ```
+        ```go
         func swap(x, y string) (string, string) {
             return y, x
         }
         ```
     - Dữ liệu trả về có thể được đặt tên, câu lệnh `return` sẽ trả về giá trị của các biến này
-        ```
+        ```go
         func split(sum int) (x, y int) {
             x = sum * 4 / 9
             y = sum - x
@@ -83,7 +77,7 @@
         }
         ```   
     - Variadic Function: Là hàm có thể truyền vào tùy ý số lượng các tham số sử dụng syntax `...`, tham số sử dụng `...` phải là tham số cuối.
-        ```
+        ```go
         func sum(elems ...int) int {
             sum := 0
             for _, v := range elems {
@@ -94,12 +88,11 @@
         ```
     - Cả tham số và giá trị trả về trao đổi dữ liệu với hàm theo cách truyền vào giá trị (pass by value).
     - Sử dụng câu lệnh `defer` để trì hoãn việc thực thi hàm cho tới khi hàm bao ngoài nó return.
-        ```
+        ```go
         func main() {
             defer fmt.Println("world")
             fmt.Println("hello")
         }
-        // kết quả: hello world
         ```
     - Mỗi lời gọi `defer` sẽ được push vào stack và được thực thi theo thứ tự LIFO (Last in first out). Ta thường sử dụng defer cho việc đóng hoặc giải phóng tài nguyên.
 
@@ -108,14 +101,14 @@
         - `Init statement`: Được thực thi trước khi bắt đầu vòng lặp đầu tiên.
         - `Condition expression`: Được đánh giá trước mỗi vòng lặp.
         - `Post statement`: Được thực thi vào cuối mỗi vòng lặp.
-        ```
+        ```go
         sum := 0
         for i := 0; i < 10; i++ {
 		    sum += i
 	    }
         ```
     - `Init statement` và `Post statement` có thể được lược bỏ (while trong go)
-        ```
+        ```go
         sum := 1
         for sum < 1000 {
 		    sum += sum
@@ -124,7 +117,7 @@
 
 5. Structs
     - `Struct` trong Go là một tập hợp các trường, các thuộc tính.
-        ```
+        ```go
         type User struct {
 	        Id       int    
 	        Name     string 
@@ -135,7 +128,7 @@
         }
         ```
     - Khởi tạo `struct`:
-        ```
+        ```go
         u := User{
             Id:       1,
             Name:     "John Doe",
@@ -148,11 +141,11 @@
 6. Array
     - Là một dãy có độ dài cố định chứa các phần tử có cùng kiểu dữ liệu.
     - Cách khai báo một array
-        ```
+        ```go
         ar := [6]int{1, 2, 3, 4, 5, 6}
         ```
     - Sử dụng vòng `for range` để duyệt qua tất cả các phần tử trong 1 `array`:
-        ```
+        ```go
         for i, v := range ar {
 		    fmt.Println(i, v)
 	    }
@@ -169,7 +162,7 @@
     - Có thể sử dụng `for ... range` để duyệt qua các phần tử trong array.
     - Sử dụng hàm `len()` để xem độ dài và hàm `cap()` để xem sức chứa tối đa của slice.
     - Khai báo một slice 
-        ```
+        ```go
         // Slice with len = 3 and cap = 3
 	    a := []int{1, 2, 3}
 
@@ -181,7 +174,7 @@
 	    c := ar[1:3]
         ```
     - Sử dụng hàm `append` để thêm phần tử vào cuối slice
-        ```
+        ```go
         // Add elements to a slice
 	    a := []int{1, 2, 3, 4, 5, 6}
 	    a = append(a, 4)
@@ -194,7 +187,7 @@
 
 8. Map
     - `Map` là một kiểu dữ liệu dùng để lưu trữ các cặp `key - value`
-        ```
+        ```go
         // Initialize a map
 	    m := make(map[string]int)
 
@@ -212,7 +205,7 @@
     - Go không có class, tuy nhiên chúng ta có thể định nghĩa các phương thức (Method) cho type (kiểu).
     - Phương thức là một hàm với đối số (argument) đặc biệt gọi là receiver.
     - Chỉ có thể thêm phương thức cho các kiểu được định nghĩa trong cùng một package.
-        ```
+        ```go
         type Rectangle struct {
 	        width  int
 	        height int
@@ -234,14 +227,14 @@
 10. Interface
     - Interface là một tập hợp các phương thức (methods). Interface cho phép chúng ta định nghĩa hành vi của các đối tượng mà không cần quan tâm đến implementation cụ thể của chúng.
     - Cú pháp để định nghĩa một interface trong Go
-        ```
+        ```go
         type Shape interface {
             area() float64
             perimeter() float64
         }
         ```
     - Trong Go, interface được implement một cách ngầm định. Điều này có nghĩa là một kiểu dữ liệu tự động thỏa mãn một interface nếu nó implement tất cả các phương thức mà interface đó yêu cầu.
-        ```
+        ```go
         type Shape interface {
 	        area() float64
 	        perimeter() float64
@@ -270,7 +263,7 @@
         ```
     - Interface mà không định nghĩa bất kỳ một method nào được gọi là `empty interface`, `interface{}`. `Empty interface` có thể chứa giá trị của bất kỳ kiểu nào và thường được dùng để xử lý các giá trị mà không biết kiểu của nó là gì.
     - `Type assertion` trong Go là một cơ chế cho phép truy cập giá trị của một kiểu (type) cụ thể bên trong interface.
-        ```
+        ```go
         func IsRectangle(shape Shape) {
 	        //Type assertion
 	        rec, ok := shape.(Rectangle)
@@ -282,7 +275,7 @@
         }
         ```
     - Chúng ta có thể dùng `Type Switch` để thực hiện liên tiếp nhiều `type assertion`
-        ```
+        ```go
         func checkType(i interface{}) {
 	        switch _ := i.(type) {
 	        case int:
@@ -302,11 +295,11 @@
 11. Error handling
     - Trong Go, cơ chế xử lí lỗi sẽ dựa vào giá trị lỗi trả về của hàm.
     - Kiểu `error` là một `interface`
-      ```
-      type error interface {
-          Error() string
-      }
-      ```
+        ```go
+        type error interface {
+            Error() string
+        }
+        ```
     - Hàm (function) có thể trả về một error, code gọi đến hàm này sẽ phải handle error này bằng cách xem nó có giá trị `nil` hay không.
       ```go
       i, err := strconv.Atoi("4")
@@ -316,60 +309,60 @@
       fmt.Println("Converted integer:", i)
       ```
     - Có thể tạo một `error` mới với static string bằng cách sử dụng `errors.New()` và có thể sử dụng `errors.Is()` để check error loại này.
-    ```go
-    // package foo
+        ```go
+        // package foo
 
-    var ErrCouldNotOpen = errors.New("could not open")
+        var ErrCouldNotOpen = errors.New("could not open")
 
-    func Open() error {
-        return ErrCouldNotOpen
-    }
-
-    // package bar
-
-    if err := foo.Open(); err != nil {
-        if errors.Is(err, foo.ErrCouldNotOpen) {
-        // handle the error
-        } else {
-            panic("unknown error")
+        func Open() error {
+            return ErrCouldNotOpen
         }
-    }
-    ```
+
+        // package bar
+
+        if err := foo.Open(); err != nil {
+            if errors.Is(err, foo.ErrCouldNotOpen) {
+            // handle the error
+            } else {
+                panic("unknown error")
+            }
+        }
+        ```
     - Có thể tạo một custom error bằng cách implement Error interface và sử dụng `errors.As()` để xác định kiểu của `error`.
-    ```go
-    // package foo
+        ```go
+        // package foo
 
-    type NotFoundError struct {
-        File string
-    }
-
-    func (e *NotFoundError) Error() string {
-        return fmt.Sprintf("file %q not found", e.File)
-    }
-
-    func Open(file string) error {
-        return &NotFoundError{File: file}
-    }
-
-
-    // package bar
-
-    if err := foo.Open("testfile.txt"); err != nil {
-        var notFound *NotFoundError
-        if errors.As(err, &notFound) {
-        // handle the error
-        } else {
-            panic("unknown error")
+        type NotFoundError struct {
+            File string
         }
-    }
-    ```
+
+        func (e *NotFoundError) Error() string {
+            return fmt.Sprintf("file %q not found", e.File)
+        }
+
+        func Open(file string) error {
+            return &NotFoundError{File: file}
+        }
+
+
+        // package bar
+
+        if err := foo.Open("testfile.txt"); err != nil {
+            var notFound *NotFoundError
+            if errors.As(err, &notFound) {
+            // handle the error
+            } else {
+                panic("unknown error")
+            }
+        }
+        ```
 
 12. Naming Convention
     - Package
         - Tên package nên ngắn gọn, thường là một từ, viết bằng chữ thường không có gạch dưới hoặc chữ hoa xen kẽ.
         - Tên package nên mô tả chính xác chức năng hoặc mục đích của nó.
         - Tránh sử dụng các tên package phổ biến để tránh xung đột khi import.
-        - Ví dụ: time, http, strings.
+        - Ví dụ: `time, http, strings`.
     - Biến, struct và hàm
         - Sử dụng camelCase cho tên biến và hàm không export.
         ```go
