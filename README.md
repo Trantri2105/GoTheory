@@ -4,6 +4,7 @@
 - Sau đó Go lần đầu tiên được giới thiệu vào tháng 11 năm 2009 và phiên bản đầu tiên của nó được phát hành vào tháng 12 năm 2012.
 
 ## Điểm mạnh và yếu của Go so với các ngôn ngữ khác
+- 
 
 ## Go được dùng để lập trình các ứng dụng như thế nào
 
@@ -104,19 +105,19 @@
 
 4. For loop
     - Trong Go, vòng `for` gồm 3 phần:
-        - `Câu lệnh khởi tạo`: Được thực thi trước khi bắt đầu vòng lặp đầu tiên.
-        - `Biểu thức điều kiện`: Được đánh giá trước mỗi vòng lặp.
-        - `Câu lệnh sau`: Được thực thi vào cuối mỗi vòng lặp.
+        - `Init statement`: Được thực thi trước khi bắt đầu vòng lặp đầu tiên.
+        - `Condition expression`: Được đánh giá trước mỗi vòng lặp.
+        - `Post statement`: Được thực thi vào cuối mỗi vòng lặp.
         ```
         sum := 0
-	    for i := 0; i < 10; i++ {
+        for i := 0; i < 10; i++ {
 		    sum += i
 	    }
         ```
-    - Phần đầu và cuối có thể được lược bỏ (while trong go)
+    - `Init statement` và `Post statement` có thể được lược bỏ (while trong go)
         ```
         sum := 1
-	    for sum < 1000 {
+        for sum < 1000 {
 		    sum += sum
 	    }
         ```
@@ -207,7 +208,7 @@
 	    // Check for key existence and retrieve value
 	    v, ok := m["1"]
         ```
-10. Method
+9. Method
     - Go không có class, tuy nhiên chúng ta có thể định nghĩa các phương thức (Method) cho type (kiểu).
     - Phương thức là một hàm với đối số (argument) đặc biệt gọi là receiver.
     - Chỉ có thể thêm phương thức cho các kiểu được định nghĩa trong cùng một package.
@@ -230,7 +231,7 @@
     - Với value receiver, method sẽ thực hiện trên một bản copy của dữ liệu gốc.
     - Để thay đổi giá trị của dữ liệu gốc, ta cần sử dụng pointer receiver.
 
-11. Interface
+10. Interface
     - Interface là một tập hợp các phương thức (methods). Interface cho phép chúng ta định nghĩa hành vi của các đối tượng mà không cần quan tâm đến implementation cụ thể của chúng.
     - Cú pháp để định nghĩa một interface trong Go
         ```
@@ -298,7 +299,94 @@
     - Không nên dùng cả value receiver và pointer receiver trên cùng một kiểu (type) trong Go.
     - Trong Go, nếu một kiểu `T` implement một interface với value receiver (`T`) thì cả `T` và `*T` đều implement interface này. Ngược lại, nếu kiểu `T` implement một interface với pointer receiver thì chỉ có `*T` implement interface. Vậy nên việc sử dụng cả hai loại receiver có thể gây nhầm lẫn về việc kiểu nào thực sự thực thi interface.
 
-11. Error
+11. Error handling
+    - Trong Go, cơ chế xử lí lỗi sẽ dựa vào giá trị lỗi trả về của hàm.
+    - Kiểu `error` là một `interface`
+      ```
+      type error interface {
+          Error() string
+      }
+      ```
+    - Hàm (function) có thể trả về một error, code gọi đến hàm này sẽ phải handle error này bằng cách xem nó có giá trị `nil` hay không.
+      ```go
+      i, err := strconv.Atoi("4")
+      if err != nil {
+          fmt.Printf("couldn't convert number: %v\n", err)
+      }
+      fmt.Println("Converted integer:", i)
+      ```
+    - Có thể tạo một `error` mới với static string bằng cách sử dụng `errors.New()` và có thể sử dụng `errors.Is()` để check error loại này.
+    ```go
+    // package foo
+
+    var ErrCouldNotOpen = errors.New("could not open")
+
+    func Open() error {
+        return ErrCouldNotOpen
+    }
+
+    // package bar
+
+    if err := foo.Open(); err != nil {
+        if errors.Is(err, foo.ErrCouldNotOpen) {
+        // handle the error
+        } else {
+            panic("unknown error")
+        }
+    }
+    ```
+    - Có thể tạo một custom error bằng cách implement Error interface và sử dụng `errors.As()` để xác định kiểu của `error`.
+    ```go
+    // package foo
+
+    type NotFoundError struct {
+        File string
+    }
+
+    func (e *NotFoundError) Error() string {
+        return fmt.Sprintf("file %q not found", e.File)
+    }
+
+    func Open(file string) error {
+        return &NotFoundError{File: file}
+    }
+
+
+    // package bar
+
+    if err := foo.Open("testfile.txt"); err != nil {
+        var notFound *NotFoundError
+        if errors.As(err, &notFound) {
+        // handle the error
+        } else {
+            panic("unknown error")
+        }
+    }
+    ```
+
+12. Naming Convention
+    - Package
+        - Tên package nên ngắn gọn, thường là một từ, viết bằng chữ thường không có gạch dưới hoặc chữ hoa xen kẽ.
+        - Tên package nên mô tả chính xác chức năng hoặc mục đích của nó.
+        - Tránh sử dụng các tên package phổ biến để tránh xung đột khi import.
+        - Ví dụ: time, http, strings.
+    - Biến, struct và hàm
+        - Sử dụng camelCase cho tên biến và hàm không export.
+        ```go
+        var someVariable string
+        func doSomething() {}
+        ```
+        - Sử dụng PascalCase cho tên biến và hàm được export.
+        ```go
+        var SomeVariable string
+        func DoSomething() {}
+        ```
+        - Tên nên ngắn gọn nhưng có ý nghĩa, đủ để mô tả chức năng hoặc dữ liệu mà chúng nắm giữ.
+      - Interface
+        - Sử dụng PascalCase với hậu tố "-er" cho interface mô tả hành vi: Reader, Writer, Formatter
+
+13. Multithreading
+    - Xử lý đồng thời (concurrency)
     
 
     
