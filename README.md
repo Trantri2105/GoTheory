@@ -286,8 +286,8 @@
 			fmt.Printf("Type string with value %s\n", v)
 		default:
 			fmt.Println("unknown type")
-	    }
-	}
+	    	}
+	 	}
         ```
     - Không nên dùng cả value receiver và pointer receiver trên cùng một kiểu (type) trong Go.
     - Trong Go, nếu một kiểu `T` implement một interface với value receiver (`T`) thì cả `T` và `*T` đều implement interface này. Ngược lại, nếu kiểu `T` implement một interface với pointer receiver thì chỉ có `*T` implement interface. Vậy nên việc sử dụng cả hai loại receiver có thể gây nhầm lẫn về việc kiểu nào thực sự thực thi interface.
