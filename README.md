@@ -277,17 +277,17 @@
     - Chúng ta có thể dùng `Type Switch` để thực hiện liên tiếp nhiều `type assertion`
         ```go
         func checkType(i interface{}) {
-	        switch _ := i.(type) {
-	        case int:
-		        fmt.Println("int")
-	        case float64:
-		        fmt.Println("float64")
-	        case string:
-		        fmt.Println("string")
-	        default:
-		        fmt.Println("unknown type")
-            }
+	    switch v := i.(type) {
+		case int:
+			fmt.Printf("Type int with value %d\n", v)
+		case float64:
+			fmt.Printf("Type float64 with value %f\n", v)
+		case string:
+			fmt.Printf("Type string with value %s\n", v)
+		default:
+			fmt.Println("unknown type")
 	    }
+	}
         ```
     - Không nên dùng cả value receiver và pointer receiver trên cùng một kiểu (type) trong Go.
     - Trong Go, nếu một kiểu `T` implement một interface với value receiver (`T`) thì cả `T` và `*T` đều implement interface này. Ngược lại, nếu kiểu `T` implement một interface với pointer receiver thì chỉ có `*T` implement interface. Vậy nên việc sử dụng cả hai loại receiver có thể gây nhầm lẫn về việc kiểu nào thực sự thực thi interface.
